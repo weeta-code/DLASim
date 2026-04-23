@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+
+# Training artifacts (too large for git)
+checkpoints/
+checkpoints_*/
+runs/
+runs_*/
+*.pt
+*.pth
+*.ckpt
+wandb/
+tensorboard/
+
+# Simulation outputs that would bloat the repo
+# (keep small demo/sample sets; exclude bulk datasets)
+data/fixed_n1000/
+data/fixed_n1000_clean/
+data/fixed_n1000_disc2/
+data/fixed_n1000_raw/
+data/fixed_n1000_raw_v2/
+data/output/
+data/small_clusters/
+data/test_random/
+# Keep metadata if small, keep test_output for examples
+# (explicit allow-lists can go here if needed)
+
+# Compiled binaries
+simulator/dla_generate
+simulator/dla_simulation
+simulator/dla_simulation_new
+simulator/dla_simulation_optimized
+simulator/dla_sim_fast
+*.o
+*.exe
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Logs
+*.log
+logs/
+*.err
+*.out
+
+# Environment files
+.env
+.env.local
+*.env
+
+# Temp
+/tmp/
+*.tmp

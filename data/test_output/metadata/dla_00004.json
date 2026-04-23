@@ -1,0 +1,11 @@
+{
+  "particle_count": 501,
+  "max_radius": 57.03874011496542,
+  "radius_of_gyration": 30.961154233322063,
+  "center_of_mass": [
+    -3.996473548896512,
+    7.188419817441872
+  ],
+  "simulation_time_ms": 949.4891166687012,
+  "seed": 46
+}
