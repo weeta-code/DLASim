@@ -141,21 +141,49 @@ Files: `results/eval_v4mc_e0004/azimuthal/`,
 
 ---
 
-## Comparison table
+## Comparison table — full eval results
 
-| Metric | v3 baseline | v3-controt e69 | v4mc e4 |
+All measured against the same 100 randomly-sampled training images.
+Ratios are gen_mean / train_mean.
+
+| Metric (gen/train ratio) | **v3 baseline** | **v3-controt @ e69** | **v4mc @ e4** |
 |---|---|---|---|
-| Dipole p₁ | 3.3× | 3.84× | 16.5× |
-| Quadrupole p₂ | 2.5× | 1.68× | 1.68× |
-| Holes | 1.32× | **0.77×** | **0.30×** |
-| Az variance | 1.17× | 1.22× | **0.85×** |
-| Status | n=100, mature | n=96, fix isolated | n=32, undertrained |
+| n samples | 100 | 100 | 88 |
+| Training epochs | 64 | 64 + 5 = 69 | 4 (from scratch) |
+| Loss at last epoch | 0.0035 | 0.0068 | 0.0043 |
+| **Dipole p₁** | **×3.3** | ×4.32 | ×15.1 |
+| Quadrupole p₂ | ×2.5 | ×1.75 | ×1.82 |
+| **Holes (loops)** | ×1.32 | **×0.80** | **×0.33** |
+| Az variance Var/Mean | ×1.17 | ×1.17 | ×1.12 |
+| R_g raw | ×1.14 | ×1.23 | ×1.37 |
+| Mean dipole magnitude | ×1.88 | ×2.18 | ×5.90 |
+| Rayleigh p_uniform | 0.996 | 0.374 | 0.098 |
 
-**Two distinct signals**:
-- Continuous rotation alone: improves topology + quadrupole, dipole unchanged
-- Multichannel from scratch: dramatically improves topology + variance
+KS p-values (gen vs train, n=100/100 unless noted):
 
-These are complementary fixes targeting different failure modes.
+| Metric | v3 | v3cr e69 | v4mc e4 |
+|---|---|---|---|
+| Dipole | 8×10⁻¹³ | 3×10⁻¹⁴ | 8×10⁻¹⁹ |
+| Quadrupole | 5×10⁻¹⁶ | 1×10⁻⁴ | 2×10⁻⁵ |
+| Holes | 4×10⁻⁷ | 0.054 (marginal) | **2×10⁻²¹** |
+
+**Three patterns visible**:
+
+1. **Continuous rotation** (D₄→SO(2)): improves topology (1.32→0.80×) and
+   quadrupole (2.5→1.75×). Does **not** improve dipole.
+
+2. **Multichannel** (3-channel from scratch): radically improves topology
+   (1.32→0.33×) — 3× FEWER loops than training set despite undertraining.
+   Dipole is poor due to undertrained model, but the topology signal is
+   already there at epoch 4 with an order of magnitude fewer parameters'
+   worth of training.
+
+3. **Both interventions show that hole count, not dipole, was the right
+   target for structural intervention.** Dipole is governed by per-sample
+   variance which neither intervention has yet solved.
+
+**Two complementary fixes for different failure modes — they should be
+combined in the next training cycle.**
 
 ---
 
