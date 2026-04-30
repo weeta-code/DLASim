@@ -53,6 +53,10 @@ def train(args):
         json.dump(vars(args), f, indent=2)
     print(f"Run directory: {run_dir}")
 
+    # Handle multichannel flag
+    if args.multichannel:
+        args.channels = 3
+
     # Auto-resume from latest checkpoint in run_dir if no explicit resume
     if not args.resume and args.run_name:
         ckpts = sorted(ckpt_dir.glob("ckpt_epoch_*.pt"))
@@ -61,11 +65,19 @@ def train(args):
             print(f"Auto-resuming from {args.resume}")
 
     # ---- Dataset ----
-    dataset = DLADataset(
-        image_dir=args.data_dir,
-        image_size=args.image_size,
-        augment=True,
-    )
+    if args.channels == 3:
+        from dataset import DLAMultiChannelDataset
+        dataset = DLAMultiChannelDataset(
+            image_dir=args.data_dir,
+            image_size=args.image_size,
+            augment=True,
+        )
+    else:
+        dataset = DLADataset(
+            image_dir=args.data_dir,
+            image_size=args.image_size,
+            augment=True,
+        )
     loader = DataLoader(
         dataset,
         batch_size=args.batch_size,
@@ -79,7 +91,7 @@ def train(args):
     # ---- Model ----
     unet = Unet(
         dim=args.model_dim,
-        channels=1,                        # single-channel grayscale
+        channels=args.channels,
         dim_mults=tuple(args.dim_mults),
         flash_attn=False,                   # safer compatibility
         self_condition=False,
@@ -250,6 +262,10 @@ def parse_args():
     p.add_argument("--data_dir", type=str, required=True,
                    help="Directory containing DLA training images")
     p.add_argument("--image_size", type=int, default=256)
+    p.add_argument("--channels", type=int, default=1,
+                   help="Number of image channels (1=grayscale, 3=multichannel)")
+    p.add_argument("--multichannel", action="store_true", default=False,
+                   help="Use multi-channel .npz dataset (sets channels=3)")
 
     # Model architecture
     p.add_argument("--model_dim", type=int, default=64,
