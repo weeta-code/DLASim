@@ -1,0 +1,22 @@
+{
+  "training": {
+    "n": 100,
+    "rayleigh_R_bar": 0.09464259057613524,
+    "rayleigh_p_uniform": 0.4093274192648012,
+    "magnitude_mean": 0.03243949922407894,
+    "magnitude_std": 0.01582430126326423,
+    "phase_mean": 0.8147814355757813
+  },
+  "generated": {
+    "n": 32,
+    "rayleigh_R_bar": 0.13445993712167154,
+    "rayleigh_p_uniform": 0.564348643817034,
+    "magnitude_mean": 0.19023454861828049,
+    "magnitude_std": 0.12572913173990616,
+    "phase_mean": 2.9328159707091346
+  },
+  "interpretation": {
+    "training_orientation": "isotropic (random per-sample direction)",
+    "generated_orientation": "isotropic (random per-sample direction)"
+  }
+}
