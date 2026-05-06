@@ -31,13 +31,13 @@ def load_summary(path):
 def main():
     base = Path("/home/vectors/Documents/Research/Machta/dla_project/results")
     v3 = load_summary(base / "azimuthal_eval_100v100" / "summary.json")
-    v3cr = load_summary(base / "eval_v3cr" / "azimuthal" / "summary.json")
-    v4mc = load_summary(base / "eval_v4mc" / "azimuthal" / "summary.json")
+    v3cr = load_summary(base / "eval_v3cr_e84" / "azimuthal" / "summary.json")
+    v4mc = load_summary(base / "eval_v4mc_e24" / "azimuthal" / "summary.json")
 
     runs = [
-        ("v3 baseline", v3, "#5C6BC0"),
-        ("v3-controt e69", v3cr, "#43A047"),
-        ("v4-multi e4", v4mc, "#E53935"),
+        ("v3 baseline e64", v3, "#5C6BC0"),
+        ("v3-controt e84", v3cr, "#43A047"),
+        ("v4-multi e24", v4mc, "#E53935"),
     ]
     train_color = "#9E9E9E"
 
@@ -85,9 +85,9 @@ def main():
     # Panel 4: dipole magnitude histograms
     ax4 = axes.flat[3]
     do_dirs = [
-        ("v3 baseline", base / "azimuthal_eval_100v100", "#5C6BC0"),
-        ("v3-controt e69", base / "eval_v3cr" / "dipole_orientation", "#43A047"),
-        ("v4-multi e4", base / "eval_v4mc" / "dipole_orientation", "#E53935"),
+        ("v3 baseline e64", base / "azimuthal_eval_100v100", "#5C6BC0"),
+        ("v3-controt e84", base / "eval_v3cr_e84" / "dipole_orientation", "#43A047"),
+        ("v4-multi e24", base / "eval_v4mc_e24" / "dipole_orientation", "#E53935"),
     ]
 
     # Need the per-sample magnitudes from the per_sample CSVs
@@ -95,7 +95,7 @@ def main():
     bins = np.linspace(0, 0.4, 30)
 
     # train comes from any of the runs (same data sampled deterministically)
-    train_mags_path = base / "eval_v3cr" / "dipole_orientation" / "dipole_orientation_summary.json"
+    train_mags_path = base / "eval_v3cr_e84" / "dipole_orientation" / "dipole_orientation_summary.json"
     if train_mags_path.exists():
         with open(train_mags_path) as f:
             t = json.load(f)
@@ -144,10 +144,10 @@ def main():
     ax4.legend(fontsize=7, loc="upper right")
     ax4.grid(True, alpha=0.3)
 
-    fig.suptitle("DLA diffusion comparison: v3 vs v3-controt (continuous rotation) vs "
-                 "v4-multichannel (3-ch)", fontsize=11)
+    fig.suptitle("DLA diffusion comparison: v3 e64 vs v3-controt e84 vs "
+                 "v4-multichannel e24", fontsize=11)
     plt.tight_layout(rect=[0, 0, 1, 0.96])
-    out_path = base / "comparison_images" / "three_way_comparison_2026-04-30.png"
+    out_path = base / "comparison_images" / "three_way_comparison_2026-05-06.png"
     # 11x8 at dpi=150 = 1650x1200, under 2000px
     plt.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close()
