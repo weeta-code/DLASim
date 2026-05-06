@@ -1,0 +1,14 @@
+{
+  "filename": "n1k_t0_00001",
+  "particle_count": 1001,
+  "white_pixel_count": 2332,
+  "pixel_rg": 117.52194553512551,
+  "particle_rg": 46.33286400169277,
+  "disc_radius": 1,
+  "max_distance": 88.94997843236831,
+  "scale": 2.0,
+  "seed_pixel": [
+    274,
+    254
+  ]
+}

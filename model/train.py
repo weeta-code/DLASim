@@ -53,8 +53,9 @@ def train(args):
         json.dump(vars(args), f, indent=2)
     print(f"Run directory: {run_dir}")
 
-    # Handle multichannel flag
-    if args.multichannel:
+    # Handle multichannel flag (3-channel = current v4mc, 4-channel = v5 seed-aware)
+    if args.multichannel and args.channels == 1:
+        # default to 3 only if user didn't override channels
         args.channels = 3
 
     # Auto-resume from latest checkpoint in run_dir if no explicit resume
@@ -106,6 +107,16 @@ def train(args):
         beta_schedule=args.beta_schedule,   # 'linear' or 'cosine'
         min_snr_loss_weight=args.min_snr,   # min-SNR loss weighting
     ).to(device)
+
+    # Wrap in cross-channel-consistent diffusion if requested
+    if args.cross_channel_loss and args.channels >= 2:
+        from cross_channel_diffusion import CrossChannelGaussianDiffusion
+        print(f"Cross-channel consistency loss ENABLED, "
+              f"weight = {args.cross_channel_weight}, mode = {args.cross_channel_mode}")
+        diffusion = CrossChannelGaussianDiffusion(
+            diffusion, weight=args.cross_channel_weight,
+            mode=args.cross_channel_mode,
+        ).to(device)
 
     param_count = sum(p.numel() for p in diffusion.parameters() if p.requires_grad)
     print(f"Model parameters: {param_count:,} ({param_count/1e6:.1f}M)")
@@ -265,7 +276,15 @@ def parse_args():
     p.add_argument("--channels", type=int, default=1,
                    help="Number of image channels (1=grayscale, 3=multichannel)")
     p.add_argument("--multichannel", action="store_true", default=False,
-                   help="Use multi-channel .npz dataset (sets channels=3)")
+                   help="Use multi-channel .npz dataset (sets channels=3 by default)")
+    p.add_argument("--cross_channel_loss", action="store_true", default=False,
+                   help="Enable cross-channel consistency loss (multichannel only)")
+    p.add_argument("--cross_channel_weight", type=float, default=0.1,
+                   help="Weight for the cross-channel consistency loss term")
+    p.add_argument("--cross_channel_mode", type=str, default="presence",
+                   choices=["presence", "rgb"],
+                   help="'presence': ch0 is binary mask, others must be 0 outside. "
+                        "'rgb': RGB seed-blue encoding, enforce R=G off seed.")
 
     # Model architecture
     p.add_argument("--model_dim", type=int, default=64,
