@@ -272,6 +272,9 @@ Primary visualizations:
 - `results/comparison_images/three_way_comparison_2026-05-06.png` —
   v3 e64 vs v3cr e84 vs v4mc e24 metrics comparison with bootstrap
   CIs (1634×1182). **Updated with final v4mc e24 numbers.**
+- `results/comparison_images/v4mc_trajectory_2026-05-06.png` —
+  v4mc convergence: how dipole/quadrupole/holes/Rg evolve from
+  epoch 4 → 14 → 24, with v3 and v3cr reference lines (1412×1025).
 
 Eval outputs:
 - `results/eval_v3cr_e84/azimuthal/` — v3-controt final metrics
