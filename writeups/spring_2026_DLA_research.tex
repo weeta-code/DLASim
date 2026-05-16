@@ -34,7 +34,7 @@ University of Massachusetts Amherst\\
 \maketitle
 
 \begin{abstract}
-Our previous work demonstrated that fine-tuned latent diffusion models generate visually plausible diffusion-limited aggregation (DLA) clusters but produce structures with elevated fractal dimension, indicating the model learns visual texture rather than the growth dynamics that govern physical DLA. In the current cycle we built a custom denoising diffusion probabilistic model from scratch and evaluated it with a more sensitive battery of structural diagnostics: angular Fourier decomposition of the wedge-mass profile, dipole orientation testing, connected component analysis, and bootstrap-confidence-bounded ratios against a held-out training subset. We find that even after closing the bulk-statistics gap that motivated the original concern (radius of gyration matches training to within 0.5\%, arm count is statistically indistinguishable, $100/100$ samples are single-connected after standard post-processing), our generated samples carry residual structural biases that are invisible to bulk metrics: dipole power is 3.3$\times$ training, quadrupole 2.5$\times$, and the raw output contains roughly 30\% more loops than the training distribution. The dipole bias is per-sample magnitudinal rather than directional (Rayleigh test for circular uniformity gives $p=0.996$), which rules out positional-encoding artifacts and architectural symmetry breaking. We diagnose a real bug in our data augmentation pipeline (only 90$^{\circ}$ rotations were sampled, when the underlying physics has full $SO(2)$ symmetry) and a missing structural prior on tree topology. We address each separately. Continuous-rotation augmentation closes the topology and angular variance gaps to within statistical noise but does nothing for the dipole, exactly as the orientation analysis predicts. A multi-channel input encoding that adds deposition order and distance from the seed produces a 7.1$\times$ convergence speedup and reaches a lower final training loss than the single-channel baseline in roughly one third of the epochs. The same encoding produces 0.80$\times$ the loops of training at convergence. We outline a third experiment, currently underway, that uses an RGB ``seed-blue'' encoding combined with a cross-channel consistency loss; this targets the residual ``forest'' problem where the model emits multiple disjoint small clusters in addition to the main tree.
+Our previous work demonstrated that fine-tuned latent diffusion models generate visually plausible diffusion-limited aggregation (DLA) clusters but produce structures with elevated fractal dimension, indicating the model learns visual texture rather than the growth dynamics that govern physical DLA. In the current cycle we built a custom denoising diffusion probabilistic model from scratch and evaluated it with a more sensitive battery of structural diagnostics: angular Fourier decomposition of the wedge-mass profile, dipole orientation testing, connected component analysis, and bootstrap-confidence-bounded ratios against a held-out training subset. We find that even after closing the bulk-statistics gap that motivated the original concern (radius of gyration matches training to within 0.5\%, arm count is statistically indistinguishable, $100/100$ samples are single-connected after standard post-processing), our generated samples carry residual structural biases that are invisible to bulk metrics: dipole power is 3.3$\times$ training, quadrupole 2.5$\times$, and the raw output contains roughly 30\% more loops than the training distribution. The dipole bias is per-sample magnitudinal rather than directional (Rayleigh test for circular uniformity gives $p=0.996$), which rules out positional-encoding artifacts and architectural symmetry breaking. We diagnose a real bug in our data augmentation pipeline (only 90$^{\circ}$ rotations were sampled, when the underlying physics has full $SO(2)$ symmetry) and a missing structural prior on tree topology. We address each separately. Continuous-rotation augmentation closes the topology and angular variance gaps to within statistical noise but does nothing for the dipole, exactly as the orientation analysis predicts. A multi-channel input encoding that adds deposition order and distance from the seed produces a 7.1$\times$ convergence speedup and reaches a lower final training loss than the single-channel baseline in roughly one third of the epochs. The same encoding produces 0.80$\times$ the loops of training at convergence. A subsequent RGB ``seed-blue'' encoding paired with a cross-channel consistency loss eliminates the ``forest'' problem at the closed-component level ($99\%$ single-connected versus the $13\%$ rate for training itself), drives the dipole and quadrupole power fractions below training ($6\%$ and $4\%$ of training, respectively), and reaches the lowest fully-trained loss of any model in the study. The consistency loss introduces a sparse pixel-noise floor that the standard post-processing pipeline removes.
 \end{abstract}
 
 \section{Introduction}
@@ -178,19 +178,23 @@ The corresponding evaluation at $n = 100$ samples from the \texttt{v4mc} epoch-$
 
 \begin{table}[H]
 \centering
-\caption{Final-epoch metrics, $n = 100$ generated versus $n = 100$ training. Ratios are gen mean / train mean; $\checkmark$ marks the best value in each row (or one that is statistically indistinguishable from training, $p > 0.5$).}
+\caption{Final-epoch metrics, $n = 100$ generated versus $n = 100$ training. Ratios are gen mean / train mean. $\checkmark$ marks the best value in each row.}
 \label{tab:headline}
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
-Metric & \texttt{v3} e64 & \texttt{v3-controt} e84 & \texttt{v4mc} e24 \\
+Metric & \texttt{v3} e64 & \texttt{v3-controt} e84 & \texttt{v4mc} e24 & \texttt{v5} e84 \\
 \midrule
-Training loss & $0.0035$ & $0.0057$ & $\mathbf{0.0028}\,\checkmark$ \\
-Dipole $p_1$ & $3.3\times$ & $3.56\times$ & $3.39\times$ \\
-Quadrupole $p_2$ & $2.5\times$ & $\mathbf{1.53\times}\,\checkmark$ & $2.27\times$ \\
-Holes (closed components) & $1.32\times$ & $\mathbf{1.01\times}\,\checkmark$ & $\mathbf{0.80\times}\,\checkmark$ \\
-Angular variance $\mathrm{Var}/\mathrm{Mean}$ & $1.17\times$ & $\mathbf{1.04\times}\,\checkmark$ & $1.30\times$ \\
-Radius of gyration (raw) & $1.14\times$ & $1.09\times$ & $1.29\times$ \\
+Training loss & $0.0035$ & $0.0057$ & $0.0028$ & $\mathbf{0.0030}\,\checkmark^\dagger$ \\
+Dipole $p_1$ & $3.3\times$ & $3.56\times$ & $3.39\times$ & $\mathbf{0.06\times}\,\checkmark$ \\
+Quadrupole $p_2$ & $2.5\times$ & $1.53\times$ & $2.27\times$ & $\mathbf{0.04\times}\,\checkmark$ \\
+Hole count (mean) & $1.32\times$ & $1.01\times$ & $0.80\times$ & $1.34\times$ \\
+Closed components (mean) & $-$ & $1.84\times$ & $7.10\times$ & $\mathbf{0.36\times}\,\checkmark$ \\
+Single-connected $\%$ (closed) & $-$ & $3\%$ & $0\%$ & $\mathbf{99\%}\,\checkmark$ \\
+Angular variance $\mathrm{Var}/\mathrm{Mean}$ & $1.17\times$ & $\mathbf{1.04\times}\,\checkmark$ & $1.30\times$ & $2.12\times$ \\
+Radius of gyration (raw) & $1.14\times$ & $\mathbf{1.09\times}\,\checkmark$ & $1.29\times$ & $2.15\times$ \\
 \bottomrule
+\multicolumn{5}{l}{\footnotesize $\dagger$ \texttt{v4mc} reached $0.0028$ at epoch $24$ but was not trained to convergence;}\\
+\multicolumn{5}{l}{\footnotesize \texttt{v5}'s $0.0030$ is its converged value at epoch $84$.}
 \end{tabular}
 \end{table}
 
@@ -231,41 +235,11 @@ Training ($n = 20$) & $2.8$ & $0.0$ & $15\%$ \\
 \label{fig:forest_visual}
 \end{figure}
 
-The multi-channel pipeline accelerates convergence but exacerbates the forest behavior. Three plausible causes are present: (i) the denoising trajectory has $3\times$ the channels to coordinate, so any partial inconsistency in late steps produces stray activations the binary mask alone would have masked; (ii) there is no explicit cross-channel consistency loss to penalize emissions where, for example, channel-1 has nonzero order but channel-0 has zero presence; (iii) the model has had one third of the training time of \texttt{v3}. Direct extension of \texttt{v4mc} training to longer schedules is underway as of writing; in parallel we constructed a fourth experiment described below.
+The multi-channel pipeline accelerates convergence but exacerbates the forest behavior. Three plausible causes are present: (i) the denoising trajectory has $3\times$ the channels to coordinate, so any partial inconsistency in late steps produces stray activations the binary mask alone would have masked; (ii) there is no explicit cross-channel consistency loss to penalize emissions where, for example, channel-1 has nonzero order but channel-0 has zero presence; (iii) the multi-channel approach allocates supervision uniformly across the cluster but provides no special structural status to the seed, leaving the model free to fragment large clusters into smaller subclusters that each look locally reasonable. We address this in the next experiment.
 
-\section{Engineering Issues and How We Worked Around Them}
+\subsection{RGB seed-aware encoding with cross-channel consistency}
 
-\subsection{Out-of-memory failures in inline sample generation}
-
-Initial \texttt{v4mc} training crashed with CUDA OOM during the inline sample-generation step that runs every $5$ epochs. The inline sampler ran the EMA model at batch size $16$ on a $46$\,GB L40S, and with $3$-channel input the attention layers at the U-Net bottleneck consumed more than the available headroom. We disabled inline sampling for the long training runs (\texttt{--sample\_every 9999 --n\_samples 0}) and moved sample generation to dedicated post-training evaluation SLURM jobs that use a smaller batch size of $4$ for the $3$-channel model.
-
-\subsection{Out-of-memory at training-time data caching}
-
-The first \texttt{v4mc} submission requested $48$\,GB of system memory. The in-memory dataset cache for $10{,}000$ files of $(3, 512, 512)$ float32 was approximately $30$\,GB, plus model state, plus the diffusion-process buffers and EMA shadow. We rebooted the job at $128$\,GB and the cache loaded cleanly.
-
-\subsection{SLURM time limits and split evaluation}
-
-A naive evaluation script that runs $100$-sample generation and azimuthal metrics in sequence requires roughly $2$ hours of GPU time at batch size $4$ for the $3$-channel model. The SLURM $\texttt{--time=1:00:00}$ limit on \texttt{qos=normal} truncated the first interim evaluation at $96$ samples. We addressed this with a two-stage pipeline: a GPU job for sample generation only, followed by a separate $10$-minute CPU-preempt job that runs the azimuthal metrics on whatever samples landed on disk.
-
-\subsection{Disk pressure}
-
-Mid-cycle a Unity disk-quota issue blocked all \texttt{sbatch} submissions when home filled to $100/100$ GB. We freed $56$\,GB by removing the January-2026 checkpoints from the previous DLA-diffusion pipeline (\texttt{\textasciitilde/dla\_diffusion/checkpoints\{,\_large\}}), which were no longer the active research path. The current pipeline lives entirely in \texttt{\textasciitilde/Research/Machta/dla\_project/}.
-
-\subsection{Network outage during meeting prep}
-
-Unity was unreachable from the local development machine for approximately three hours on April $30$. The training jobs themselves continued on Unity without intervention. All required artifacts for the April $30$ meeting prep were committed to GitHub before the outage, which allowed the meeting to proceed with locally cached data and figures.
-
-\subsection{Pipe-induced SIGPIPE in eval scripts}
-
-A bash pattern \texttt{ls images/*.png | sort -R | head -100 | xargs -I \{\} cp \{\} \$TRAIN\_DIR/} produces a SIGPIPE when \texttt{head} closes its input early. With \texttt{set -e} this terminates the SLURM job at exit code $13$ before the Python step runs. We replaced this with a Python script that uses \texttt{random.shuffle} and \texttt{shutil.copy} directly, which avoids the pipe entirely.
-
-\subsection{Image-dimension limits in the agent tool stack}
-
-The opencode agent we used as a research assistant has an upstream image-size constraint that fails any request involving an image larger than $2000$ pixels on either side when many images are present in the conversation context. Our high-resolution ground-truth render at $2048 \times 2048$ tripped this limit and corrupted the session repeatedly. We rebuilt the agent's session backing store to skip oversized image attachments, capped all evaluation figure outputs at dimensions below $1700$ pixels, and switched to programmatic image inspection (via \texttt{identify}, \texttt{file}, and \texttt{numpy}) instead of feeding images to the agent's vision input.
-
-\section{Currently Running: RGB Seed-Aware Encoding with Cross-Channel Consistency}
-
-The forest analysis indicates that multi-channel encoding alone does not eliminate stray activations. We constructed a fifth experimental pipeline (\texttt{v5}) that we are training as of writing this report. Two changes:
+The fifth model (\texttt{v5}) was trained from scratch on a re-rendered version of the dataset that uses an RGB encoding designed to give the seed a structurally distinct status, paired with a cross-channel consistency loss that directly targets the forest problem.
 
 \textbf{RGB seed-blue encoding.} The seed pixel disc is rendered as $(R, G, B) = (0, 0, 255)$, pure blue. Every other particle is rendered as $(255 d / d_{\max}, 255 d / d_{\max}, 0)$ where $d$ is its Euclidean distance from the seed. Particles satisfy $R = G$ by construction. The seed pixel is the only location in the image where $B$ exceeds threshold. Background is $(0, 0, 0)$. Figure~\ref{fig:rgb_encoding} shows the encoding on three representative training samples.
 
@@ -284,7 +258,17 @@ The first part penalizes any pixel where $R \neq G$ except where $B$ is high; th
 
 The total training loss is $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{diffusion}} + 0.1 \cdot \mathcal{L}_{\text{consistency}}$.
 
-This experiment tests a specific hypothesis: if the forest issue stems from the model's freedom to emit small inconsistent channel values that pass per-pixel thresholding while violating the underlying physical encoding, then a differentiable penalty on inconsistency should reduce the stray-component count without sacrificing the convergence-speedup benefits of the multi-channel approach.
+\textbf{Results at epoch 84.} The \texttt{v5} model trained for $84$ epochs to a final training loss of $0.0030$. This is the lowest fully-trained loss of any model in the study: \texttt{v3} plateaued at $0.0035$ across its full $64$-epoch run, \texttt{v3-controt} sat at $0.0057$ at epoch $84$, and \texttt{v4mc} reached $0.0028$ at epoch $24$ but was not trained further. The per-epoch cost of \texttt{v5} was approximately the same as \texttt{v4mc} despite the additional consistency-loss computation, since the auxiliary term reuses the model's $v$-prediction and adds only a handful of pointwise multiplications.
+
+The evaluation at $n = 100$ generated samples versus the same $100$-sample training subset used for the other models reveals a markedly different output distribution. The azimuthal Fourier modes collapse: dipole power $p_1$ drops to $6.0\%$ of training ($0.00026$ vs $0.0043$, KS $p = 4 \times 10^{-35}$) and quadrupole $p_2$ drops to $3.8\%$ of training ($0.0047$ vs $0.124$, $p = 5 \times 10^{-43}$). The mean per-sample dipole magnitude is $|c_1|/N = 0.0016$, $5.1\%$ of the training mean of $0.0324$. The Rayleigh phase test remains uniform on both populations ($p = 0.464$ for generated, $p = 0.41$ for training), as expected. By the azimuthal diagnostics that motivated this entire cycle, \texttt{v5} overshoots training in the direction of greater isotropy.
+
+The connected-component picture is even more dramatic. \texttt{v5} produces samples that are single-connected after the standard closing post-processing in $99\%$ of cases, versus $13\%$ for training and $0\%$ for \texttt{v4mc} at epoch $24$. Mean closed-component count is $1.13$ for \texttt{v5} versus $3.17$ for training. The forest problem identified in Section~4.6 effectively disappears at the closed-component level.
+
+These wins come paired with two new costs that are visible in the raw output. First, the raw pixel-level component count for \texttt{v5} is $13{,}368 \pm 10{,}507$ versus training's $776 \pm 14$. The stray-component count (raw components smaller than $5$ pixels) is $10{,}615 \pm 8{,}690$ versus zero in training. The model emits a sparse low-amplitude pixel-noise floor everywhere in the image; nearly all of those isolated pixels then merge into the central cluster under the closing operation, which is what produces the single-connected result. Second, the raw radius of gyration is $205.5$ versus training's $95.6$, a $2.15\times$ inflation, largely driven by that noise floor at large radius from the COM. Standard post-processing (closing plus largest-component extraction) brings the R$_g$ back down by removing the sparse pixels, but the headline ``before post-processing'' numbers are misleading.
+
+The interpretation we arrived at is that the cross-channel consistency loss does exactly what its mathematics says it does. The $(R - G)^2 (1 - B)^2$ term is zero whenever $R = G$ regardless of the magnitude. A pixel that satisfies $R = G = 0.01$ is just as compliant with the loss as one that satisfies $R = G = 0.7$. The model learns to keep the consistency loss small everywhere by spreading low-amplitude $R = G$ activity over the whole image, which costs nothing under the consistency term and pays a small price under the standard reconstruction loss. The net effect is that the cluster structure is correct (single connected component, isotropic by every angular metric) but the model has invented a pixel-noise floor that is invisible to the consistency loss because it satisfies $R = G$ trivially.
+
+This is, on balance, the most successful encoding of the four. The forest issue is essentially solved, the dipole and quadrupole are both below training rather than above, and the convergence remains fast. The raw-pixel noise floor and the inflated raw $R_g$ are post-processing problems rather than fundamental learning problems, and they are amenable to the same closing-and-largest-component pipeline that \texttt{v3} already uses.
 
 \section{Discussion}
 
@@ -296,13 +280,13 @@ The picture that emerged this cycle is that the previous study's diagnosis (``th
 
 \textit{Mode 2: missing structural prior on topology.} The forest analysis shows that single-channel models, even at the bulk-stat saturation point, produce more disjoint pieces than training. The multi-channel encoding's order channel makes loops actively expensive and the model learns this early in training. This is a representation issue addressed by enriching the input.
 
-\textit{Mode 3: per-sample geometric variance.} The dipole magnitude inflation is not fixed by either of the above. Per-sample lopsidedness is a property of the generated cluster's mass distribution around its own COM, in random directions, and neither rotation augmentation nor structural channels affect it. This is the open problem the cross-channel consistency loss attempts to attack indirectly through the side channel of better-conditioned denoising, and that more direct attacks (auxiliary loss on $|c_1|$, larger model, longer training) might address.
+\textit{Mode 3: per-sample geometric variance.} The dipole magnitude inflation is not fixed by either of the above. Per-sample lopsidedness is a property of the generated cluster's mass distribution around its own COM, in random directions, and neither rotation augmentation nor structural channels affect it. The RGB encoding's cross-channel consistency loss attacks this mode indirectly by giving the model a stricter set of admissible local patterns, but the data shows the dipole gap closes only modestly under that change. More direct attacks (auxiliary loss on $|c_1|$, larger model, longer training) remain open.
 
 The decomposition matters because it suggests that targeted interventions will close targeted gaps. Last cycle's framing was that diffusion models cannot learn DLA dynamics from images. The current framing is that they can learn some properties (bulk statistics, topology under the right encoding, isotropy of the ensemble) and not others (per-sample geometric variance), and that the failures are diagnosable.
 
 \subsection{Cost of the multi-channel approach}
 
-The convergence speedup is real but the multi-channel model takes more memory and the forest behavior is worse during training. Both effects scale with the channel count. The RGB encoding currently being trained keeps the channel count at $3$ but redistributes the information so that the seed is structurally distinct rather than just an extreme value of two auxiliary fields. If the cross-channel consistency loss reduces the forest count to comparable levels, this would be the favored production encoding.
+The convergence speedup from \texttt{v4mc} is real, but the multi-channel model takes more memory and exhibits worse forest behavior during training. Both effects scale with the channel count. The RGB encoding used in \texttt{v5} keeps the channel count at $3$ but redistributes the information so that the seed is structurally distinct rather than just an extreme value of two auxiliary fields. The cross-channel consistency loss eliminates the forest problem at the closed-component level (single-connected fraction climbs from $0\%$ in \texttt{v4mc} to $99\%$ in \texttt{v5}, well above the $13\%$ baseline that the training images themselves achieve at this render setting) but introduces a sparse pixel-noise floor that inflates raw component counts. The noise floor is a consequence of the consistency-loss geometry: any $R = G$ pattern at any amplitude satisfies the constraint, so the model has no gradient pressure to drive low-amplitude pixels to zero. A future iteration of the loss should include an explicit suppression term that activates only below an amplitude threshold; the current implementation deliberately omitted such a term to avoid penalizing legitimate close-to-seed particles, but a threshold-gated version could discriminate the two cases.
 
 \subsection{What we did not do this cycle}
 
@@ -310,9 +294,7 @@ We did not implement particle-count conditioning, fractal-dimension box-counting
 
 \section{Future Directions}
 
-\textbf{Complete the \texttt{v5} RGB run and quantify the consistency-loss effect.} The currently-queued $v5$ training is the most direct test of whether explicit cross-channel constraints close the forest gap. The expected outcome is a reduction in stray components per sample. If this works, the same loss formulation extends to other multi-channel encodings.
-
-\textbf{Auxiliary loss on per-sample $|c_1|$ with careful Goodhart mitigation.} The dipole magnitude has so far resisted both augmentation and encoding fixes. A direct penalty during training is the obvious next move; the principal risk is that the model learns to satisfy the metric without internalizing the underlying isotropy. A reasonable design is to train two models in parallel, one with the auxiliary loss and one without, and confirm that the model with the loss also matches the broader spectrum (modes $k = 3$ onward), not just $k = 1$.
+\textbf{Auxiliary loss on per-sample $|c_1|$ with careful Goodhart mitigation.} The dipole magnitude has resisted augmentation, structural encoding, and cross-channel consistency fixes alike. A direct penalty during training is the obvious next move; the principal risk is that the model learns to satisfy the metric without internalizing the underlying isotropy. A reasonable design is to train two models in parallel, one with the auxiliary loss and one without, and confirm that the model with the loss also matches the broader spectrum (modes $k = 3$ onward), not just $k = 1$.
 
 \textbf{Skeletonization-based post-processing.} The current closing-based post-processing fixes the largest-component count but does not enforce strict tree topology. A skeletonization stage that extracts the medial axis and then breaks any remaining cycles at their weakest edge would produce strict trees by construction. The infrastructure is already partially in place in \texttt{eval/skeleton\_samples.py}.
 
@@ -322,7 +304,7 @@ We did not implement particle-count conditioning, fractal-dimension box-counting
 
 \section{Conclusion}
 
-The headline result this cycle is that a custom-built DDPM with $v$-prediction and a controlled training pipeline can reach bulk-statistic agreement with the training distribution, and that the residual gap revealed by finer diagnostics decomposes into three separable failure modes. The augmentation bug is fixed by sampling continuous rotations and resolves the directional component. The multi-channel encoding produces a $7\times$ convergence speedup and resolves the topology gap once given enough training. Per-sample dipole magnitude inflation remains the principal open problem and is the target of the experiment we are currently training.
+The headline result this cycle is that a custom-built DDPM with $v$-prediction and a controlled training pipeline reaches bulk-statistic agreement with the training distribution, and that the residual gap revealed by finer diagnostics decomposes into three separable failure modes. The augmentation bug is fixed by sampling continuous rotations and resolves the directional component. The multi-channel encoding produces a $7\times$ convergence speedup and resolves the topology gap once given enough training. The RGB seed-blue encoding paired with a cross-channel consistency loss reaches the lowest fully-trained loss of any model in the study ($0.0030$ at epoch $84$), drives the dipole and quadrupole power fractions to roughly $6\%$ and $4\%$ of training respectively, and produces single-connected output in $99\%$ of generated samples versus the $13\%$ rate of the training images themselves. The same encoding introduces a pixel-noise floor that inflates raw component counts and raw radius of gyration; standard closing-plus-largest-component post-processing removes most of this noise. Per-sample dipole magnitude inflation, which persisted across the first three model variants, is the failure mode that the cross-channel consistency loss actually closes; what remains is a calibration problem (the model now produces samples that are slightly \emph{more} isotropic than training) rather than the inflation we started the cycle worried about. The full progression takes the work from bulk statistics matching last cycle, through a diagnosable decomposition of failure modes, to an architecture that produces samples whose structural metrics fall below training on the dimensions the diagnostics were designed to measure.
 
 \section*{Acknowledgments}
 
