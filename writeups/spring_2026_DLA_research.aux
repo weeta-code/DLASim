@@ -1,0 +1,104 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{desouza2026learning}
+\citation{wittensander1981}
+\citation{meakin1998}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{ho2020ddpm}
+\citation{salimans2022progressive}
+\citation{hang2023efficient}
+\citation{nichol2021improved}
+\citation{fisher1995statistical}
+\citation{ronneberger2015unet}
+\citation{lucidrains2024ddpm}
+\citation{song2020ddim}
+\citation{salimans2022progressive}
+\citation{nichol2021improved}
+\citation{hang2023efficient}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Background and Setup}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}DLA and the targets we care about now}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Custom DDPM in place of fine-tuned SD}{2}{subsection.2.2}\protected@file@percent }
+\citation{massey1951ks}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Dataset construction}{3}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}What We Measured}{3}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Bulk statistics first}{3}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Azimuthal Fourier decomposition}{3}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Dipole orientation test}{3}{subsection.3.3}\protected@file@percent }
+\citation{fisher1995statistical}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Forest analysis}{4}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Findings}{4}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Where the bulk-stat gap closed and where it didn't}{4}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Azimuthal Fourier analysis at $n = 100$ samples per population. The top-left panel shows the mean wedge-mass profile $m(\theta )$ with $\pm 1\sigma $ shading. Top-right shows the AC-normalized power spectrum with inter-quartile shading. The bottom panel plots $\log _{10}(\langle P_k^{\text  {gen}} \rangle / \langle P_k^{\text  {train}} \rangle )$ per mode, with bootstrap $95\%$ confidence intervals. Modes $k = 1$ and $k = 2$ are significantly elevated; the higher modes are statistically indistinguishable from training.\relax }}{5}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:spectrum}{{1}{5}{Azimuthal Fourier analysis at $n = 100$ samples per population. The top-left panel shows the mean wedge-mass profile $m(\theta )$ with $\pm 1\sigma $ shading. Top-right shows the AC-normalized power spectrum with inter-quartile shading. The bottom panel plots $\log _{10}(\langle P_k^{\text {gen}} \rangle / \langle P_k^{\text {train}} \rangle )$ per mode, with bootstrap $95\%$ confidence intervals. Modes $k = 1$ and $k = 2$ are significantly elevated; the higher modes are statistically indistinguishable from training.\relax }{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}The dipole bias is magnitudinal, not directional}{5}{subsection.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Polar histograms of per-sample dipole phase $\arg (c_1)$ for training (left, $n=200$) and generated (right, $n=100$). Both distributions pass the Rayleigh circular-uniformity test with $p > 0.79$. The dipole bias is a per-sample magnitude inflation in random directions, not a directional preference.\relax }}{6}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:dipole_orientation}{{2}{6}{Polar histograms of per-sample dipole phase $\arg (c_1)$ for training (left, $n=200$) and generated (right, $n=100$). Both distributions pass the Rayleigh circular-uniformity test with $p > 0.79$. The dipole bias is a per-sample magnitude inflation in random directions, not a directional preference.\relax }{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}A real bug in the augmentation}{6}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Continuous rotation closes topology and variance, but not dipole}{6}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Multi-channel encoding: a 7$\times $ convergence speedup}{7}{subsection.4.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Multi-channel encoding of a single DLA cluster. Left: binary presence (what the single-channel model sees). Middle: deposition order $i/(N-1)$, with the seed at $0$ and the last-placed particle at $1$. Right: distance from seed normalized by cluster radius. Channels 1 and 2 are zero outside the cluster.\relax }}{7}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:multichannel_explainer}{{3}{7}{Multi-channel encoding of a single DLA cluster. Left: binary presence (what the single-channel model sees). Middle: deposition order $i/(N-1)$, with the seed at $0$ and the last-placed particle at $1$. Right: distance from seed normalized by cluster radius. Channels 1 and 2 are zero outside the cluster.\relax }{figure.caption.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Training-loss trajectories. \texttt  {v3} (blue) reaches loss $0.0035$ at epoch $64$. \texttt  {v3-controt} (green) warm-starts from \texttt  {v3} at epoch $64$ under continuous-rotation augmentation; the loss climbs initially as the model adapts to the richer training distribution. \texttt  {v4-multichannel} (red) starts from scratch with the $3$-channel input and reaches \texttt  {v3}'s epoch-$64$ loss at epoch $9$, a $7.1\times $ convergence speedup. At epoch $24$ the multi-channel loss is $0.0028$, lower than any value \texttt  {v3} achieved.\relax }}{8}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:loss_trajectories}{{4}{8}{Training-loss trajectories. \texttt {v3} (blue) reaches loss $0.0035$ at epoch $64$. \texttt {v3-controt} (green) warm-starts from \texttt {v3} at epoch $64$ under continuous-rotation augmentation; the loss climbs initially as the model adapts to the richer training distribution. \texttt {v4-multichannel} (red) starts from scratch with the $3$-channel input and reaches \texttt {v3}'s epoch-$64$ loss at epoch $9$, a $7.1\times $ convergence speedup. At epoch $24$ the multi-channel loss is $0.0028$, lower than any value \texttt {v3} achieved.\relax }{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Headline metrics across the three models at their final evaluated checkpoints. Bars show the gen/train mean ratio; error whiskers are bootstrap $95\%$ confidence intervals; the dashed gray line at $1.0$ marks the training reference. Bottom-right panel overlays the per-sample dipole magnitude distribution. \texttt  {v3-controt} (green) closes the hole and variance gaps. \texttt  {v4mc} at epoch $24$ matches dipole and improves on holes despite having one third of the training time.\relax }}{9}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:three_way}{{5}{9}{Headline metrics across the three models at their final evaluated checkpoints. Bars show the gen/train mean ratio; error whiskers are bootstrap $95\%$ confidence intervals; the dashed gray line at $1.0$ marks the training reference. Bottom-right panel overlays the per-sample dipole magnitude distribution. \texttt {v3-controt} (green) closes the hole and variance gaps. \texttt {v4mc} at epoch $24$ matches dipole and improves on holes despite having one third of the training time.\relax }{figure.caption.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Final-epoch metrics, $n = 100$ generated versus $n = 100$ training. Ratios are gen mean / train mean; $\text  {$\mathsurround \z@ \mathchar "458$}$ marks the best value in each row (or one that is statistically indistinguishable from training, $p > 0.5$).\relax }}{9}{table.caption.6}\protected@file@percent }
+\newlabel{tab:headline}{{1}{9}{Final-epoch metrics, $n = 100$ generated versus $n = 100$ training. Ratios are gen mean / train mean; $\checkmark $ marks the best value in each row (or one that is statistically indistinguishable from training, $p > 0.5$).\relax }{table.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces \texttt  {v4mc} metric trajectory across training. Dipole ratio drops from $15\times $ at epoch $4$ to $3.4\times $ at epoch $24$, matching the \texttt  {v3} epoch-$64$ baseline. Holes stay well below training across all checkpoints. Quadrupole and $R_g$ remain comparable to \texttt  {v3-controt}.\relax }}{10}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:v4mc_trajectory}{{6}{10}{\texttt {v4mc} metric trajectory across training. Dipole ratio drops from $15\times $ at epoch $4$ to $3.4\times $ at epoch $24$, matching the \texttt {v3} epoch-$64$ baseline. Holes stay well below training across all checkpoints. Quadrupole and $R_g$ remain comparable to \texttt {v3-controt}.\relax }{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}The forest problem}{10}{subsection.4.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Forest analysis. Closed components is the number of connected components after $3$ iterations of $3 \times 3$ morphological closing. Strays are raw components smaller than $5$ pixels. Single-connected\% is the fraction of samples that have exactly one component after closing.\relax }}{10}{table.caption.8}\protected@file@percent }
+\newlabel{tab:forest}{{2}{10}{Forest analysis. Closed components is the number of connected components after $3$ iterations of $3 \times 3$ morphological closing. Strays are raw components smaller than $5$ pixels. Single-connected\% is the fraction of samples that have exactly one component after closing.\relax }{table.caption.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Forest issue: each cell shows one full $512 \times 512$ sample with annotated closed-component and raw-component counts. Top row: real training DLAs render with $2$--$4$ closed components on average due to the $1$-pixel-disc, scale-$2$ render setting. Middle row: \texttt  {v3-controt} samples carry $5$--$10$ closed components. Bottom row: \texttt  {v4mc} samples carry $15$--$35$, with hundreds of stray single-pixel activations scattered around the main cluster.\relax }}{11}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:forest_visual}{{7}{11}{Forest issue: each cell shows one full $512 \times 512$ sample with annotated closed-component and raw-component counts. Top row: real training DLAs render with $2$--$4$ closed components on average due to the $1$-pixel-disc, scale-$2$ render setting. Middle row: \texttt {v3-controt} samples carry $5$--$10$ closed components. Bottom row: \texttt {v4mc} samples carry $15$--$35$, with hundreds of stray single-pixel activations scattered around the main cluster.\relax }{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Engineering Issues and How We Worked Around Them}{11}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Out-of-memory failures in inline sample generation}{11}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Out-of-memory at training-time data caching}{12}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}SLURM time limits and split evaluation}{12}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Disk pressure}{12}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Network outage during meeting prep}{12}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Pipe-induced SIGPIPE in eval scripts}{12}{subsection.5.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Image-dimension limits in the agent tool stack}{12}{subsection.5.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Currently Running: RGB Seed-Aware Encoding with Cross-Channel Consistency}{13}{section.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces RGB seed-aware encoding for the \texttt  {v5} pipeline. Five views per sample: composite RGB, R channel alone, G channel alone, B channel alone, and a difference channel $B - R/2 - G/2$ that visually isolates the seed.\relax }}{13}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:rgb_encoding}{{8}{13}{RGB seed-aware encoding for the \texttt {v5} pipeline. Five views per sample: composite RGB, R channel alone, G channel alone, B channel alone, and a difference channel $B - R/2 - G/2$ that visually isolates the seed.\relax }{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{14}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}What we now know about the failure modes}{14}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Cost of the multi-channel approach}{14}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}What we did not do this cycle}{14}{subsection.7.3}\protected@file@percent }
+\bibcite{desouza2026learning}{1}
+\bibcite{wittensander1981}{2}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Future Directions}{15}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusion}{15}{section.9}\protected@file@percent }
+\bibcite{meakin1998}{3}
+\bibcite{machta2013}{4}
+\bibcite{ho2020ddpm}{5}
+\bibcite{salimans2022progressive}{6}
+\bibcite{hang2023efficient}{7}
+\bibcite{nichol2021improved}{8}
+\bibcite{song2020ddim}{9}
+\bibcite{ronneberger2015unet}{10}
+\bibcite{rombach2022ldm}{11}
+\bibcite{sohl2015nonequilibrium}{12}
+\bibcite{karras2022elucidating}{13}
+\bibcite{fisher1995statistical}{14}
+\bibcite{massey1951ks}{15}
+\bibcite{lucidrains2024ddpm}{16}
+\bibcite{harris2020array}{17}
+\bibcite{virtanen2020scipy}{18}
+\bibcite{paszke2019pytorch}{19}
+\gdef \@abspage@last{16}
